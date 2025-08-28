@@ -1,15 +1,15 @@
 // console.log("hello naveen");
 let matrix = [
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
 const totalRows = matrix.length;
@@ -43,7 +43,7 @@ const loadShape = (shape: number[][], columnStartIdx: number) => {
     while (shapeRowIdx < shape.length) {
       const row = matrix?.[rowIdx + shapeRowIdx] ?? [];
       let i = columnStartIdx;
-      while (columnEndIdx < row.length && i < columnEndIdx) {
+      while (i < columnEndIdx) {
         if (row[i] == 0) {
           i += 1;
         }
@@ -69,11 +69,14 @@ const loadShape = (shape: number[][], columnStartIdx: number) => {
 
     rowIdx += 1;
   }
-  matrix = JSON.parse(JSON.stringify(result));
 
-  console.log(JSON.stringify(matrix, null, 3));
+  if (result.length) {
+    matrix = JSON.parse(JSON.stringify(result));
+  }
 };
 
-for (let index = 0; index < 3; index++) {
-  loadShape(squareMatrix, index);
+for (let index = 0; index < 4; index++) {
+  loadShape(squareMatrix, index > 0 ? index * 2 : index);
 }
+
+console.log(JSON.stringify(matrix, null, 3));
