@@ -12,6 +12,8 @@ let matrix = [
   [0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
+const emptyRow = [0, 0, 0, 0, 0, 0, 0, 0];
+
 const totalRows = matrix.length;
 
 const totalColumns = matrix[0].length;
@@ -33,24 +35,15 @@ const hasCollision = (
   boardRowIdx: number,
   columnStartIdx: number
 ): boolean => {
-  let shapeRowIdx = 0;
-
-  while (shapeRowIdx < shape.length) {
-    const shapeRow = shape[shapeRowIdx];
-    const boardRow = matrix?.[boardRowIdx + shapeRowIdx] ?? [];
-    let i = columnStartIdx;
-    const columnEndIdx = columnStartIdx + shapeRow.lastIndexOf(1) + 1;
-    while (
-      i < columnEndIdx &&
-      shapeRow[i - columnStartIdx] == 1 &&
-      boardRow[i] == 0
-    ) {
-      i += 1;
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (shape[r][c] === 1) {
+        const boardR = boardRowIdx + r;
+        const boardC = columnStartIdx + c;
+        if (boardR >= totalRows) return true;
+        if (matrix[boardR] && matrix[boardR][boardC] === 1) return true;
+      }
     }
-    if (i < columnEndIdx - 1) {
-      return true;
-    }
-    shapeRowIdx += 1;
   }
   return false;
 };
@@ -60,7 +53,7 @@ const placeShape = (
   boardRowIdx: number,
   columnStartIdx: number
 ) => {
-  const newBoard = JSON.parse(JSON.stringify(matrix));
+  const newBoard: number[][] = JSON.parse(JSON.stringify(matrix));
 
   for (let r = 0; r < shape.length; r++) {
     for (let c = 0; c < shape[r].length; c++) {
@@ -71,6 +64,15 @@ const placeShape = (
   }
 
   matrix = newBoard;
+
+  for (let rowIdx = totalRows - 1; rowIdx >= 0; rowIdx--) {
+    const row = newBoard[rowIdx];
+    if (row.every((val) => val === 1)) {
+      newBoard.splice(rowIdx, 1);
+      newBoard.unshift([...emptyRow]);
+      rowIdx++;
+    }
+  }
 };
 
 const loadShape = (shape: number[][], columnStartIdx: number) => {
