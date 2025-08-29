@@ -28,6 +28,52 @@ const LMatrix = [
   [1, 1, 1],
 ];
 
+const hasCollision = (
+  shape: number[][],
+  boardRowIdx: number,
+  columnStartIdx: number
+): boolean => {
+  let shapeRowIdx = 0;
+
+  while (shapeRowIdx < shape.length) {
+    const shapeRow = shape[shapeRowIdx];
+    const boardRow = matrix?.[boardRowIdx + shapeRowIdx] ?? [];
+    let i = columnStartIdx;
+    const columnEndIdx = columnStartIdx + shapeRow.lastIndexOf(1) + 1;
+    while (
+      i < columnEndIdx &&
+      shapeRow[i - columnStartIdx] == 1 &&
+      boardRow[i] == 0
+    ) {
+      i += 1;
+    }
+    if (i < columnEndIdx - 1) {
+      return true;
+    }
+    shapeRowIdx += 1;
+  }
+  return false;
+};
+
+const placeShape = (
+  shape: number[][],
+  boardRowIdx: number,
+  columnStartIdx: number
+) => {
+  const newBoard = JSON.parse(JSON.stringify(matrix));
+
+  let shapeRowIdx = 0;
+  while (shapeRowIdx < shape.length) {
+    const columnEndIdx = columnStartIdx + shape[shapeRowIdx].lastIndexOf(1) + 1;
+    for (let j = columnStartIdx; j < columnEndIdx; j++) {
+      newBoard[boardRowIdx + shapeRowIdx][j] = 1;
+    }
+    shapeRowIdx += 1;
+  }
+
+  matrix = newBoard;
+};
+
 const loadShape = (shape: number[][], columnStartIdx: number) => {
   let columnEndIdx = columnStartIdx + shape[0].length;
 
@@ -37,53 +83,16 @@ const loadShape = (shape: number[][], columnStartIdx: number) => {
     columnEndIdx = totalColumns;
   }
 
-  let result: number[][] = [];
-
   let rowIdx = 0;
-  while (rowIdx < totalRows) {
+  while (true) {
     console.log("Rendering Row", rowIdx);
-    let temp = true;
-    let shapeRowIdx = 0;
 
-    while (shapeRowIdx < shape.length) {
-      const shapeRow = shape[shapeRowIdx];
-      const boardRow = matrix?.[rowIdx + shapeRowIdx] ?? [];
-      let i = columnStartIdx;
-      columnEndIdx = columnStartIdx + shapeRow.lastIndexOf(1) + 1;
-      while (
-        i < columnEndIdx &&
-        shapeRow[i - columnStartIdx] == 1 &&
-        boardRow[i] == 0
-      ) {
-        i += 1;
-      }
-      if (i < columnEndIdx - 1) {
-        temp = false;
-      }
-      shapeRowIdx += 1;
-    }
-
-    if (!temp) break;
-
-    result = JSON.parse(JSON.stringify(matrix));
-
-    if (rowIdx <= totalRows - shape.length) {
-      let shapeRowIdx = 0;
-      while (shapeRowIdx < shape.length) {
-        columnEndIdx = columnStartIdx + shape[shapeRowIdx].lastIndexOf(1) + 1;
-        for (let j = columnStartIdx; j < columnEndIdx; j++) {
-          result[rowIdx + shapeRowIdx][j] = 1;
-        }
-        shapeRowIdx += 1;
-      }
-    }
+    if (hasCollision(shape, rowIdx + 1, columnStartIdx)) break;
 
     rowIdx += 1;
   }
 
-  if (result.length) {
-    matrix = JSON.parse(JSON.stringify(result));
-  }
+  placeShape(shape, rowIdx, columnStartIdx);
 };
 
 for (let index = 0; index < 4; index++) {
