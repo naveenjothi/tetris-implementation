@@ -62,13 +62,12 @@ const placeShape = (
 ) => {
   const newBoard = JSON.parse(JSON.stringify(matrix));
 
-  let shapeRowIdx = 0;
-  while (shapeRowIdx < shape.length) {
-    const columnEndIdx = columnStartIdx + shape[shapeRowIdx].lastIndexOf(1) + 1;
-    for (let j = columnStartIdx; j < columnEndIdx; j++) {
-      newBoard[boardRowIdx + shapeRowIdx][j] = 1;
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (shape[r][c] == 1) {
+        newBoard[boardRowIdx + r][columnStartIdx + c] = 1;
+      }
     }
-    shapeRowIdx += 1;
   }
 
   matrix = newBoard;
