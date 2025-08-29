@@ -46,10 +46,15 @@ const loadShape = (shape: number[][], columnStartIdx: number) => {
     let shapeRowIdx = 0;
 
     while (shapeRowIdx < shape.length) {
-      const row = matrix?.[rowIdx + shapeRowIdx] ?? [];
+      const shapeRow = shape[shapeRowIdx];
+      const boardRow = matrix?.[rowIdx + shapeRowIdx] ?? [];
       let i = columnStartIdx;
-      columnEndIdx = columnStartIdx + shape[shapeRowIdx].lastIndexOf(1) + 1;
-      while (i < columnEndIdx && row[i] == 0) {
+      columnEndIdx = columnStartIdx + shapeRow.lastIndexOf(1) + 1;
+      while (
+        i < columnEndIdx &&
+        shapeRow[i - columnStartIdx] == 1 &&
+        boardRow[i] == 0
+      ) {
         i += 1;
       }
       if (i < columnEndIdx - 1) {
